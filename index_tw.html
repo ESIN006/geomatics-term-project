@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERM WORK - ESİN ELÇİN ÖZER</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .header-section { background: #003366; color: white; padding: 50px 0; margin-bottom: 30px; border-bottom: 5px solid #d4af37; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .btn-custom { background-color: #003366; color: white; border: none; }
+        .btn-custom:hover { background-color: #002244; color: white; }
+        .result-box { font-weight: bold; border-radius: 10px; }
+        h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 10px; }
+        h2 { font-size: 2rem; font-weight: 500; opacity: 0.9; margin-bottom: 20px; }
+        .info-text { font-size: 1.2rem; margin-bottom: 5px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div class="header-section text-center">
+    <div class="container">
+        <h1>Geomatics Engineering</h1>
+        <h2>TERM WORK - Personal Web Page</h2>
+        <div class="mt-4">
+            <p class="info-text">Name: ESİN ELÇİN ÖZER</p>
+            <p class="info-text">Student ID: 010240505</p>
+            <p class="info-text">Course: GEO101E</p>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+
+        <!-- GEODETIC -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-primary mb-4 border-bottom pb-2">
+                        Geodetic Calculations
+                    </h4>
+
+                    <p class="text-muted small">
+                        Enter coordinates of points A and B to calculate the horizontal distance and azimuth.
+                    </p>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Xa (m)</label>
+                            <input type="text" id="xa" class="form-control" inputmode="decimal">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Ya (m)</label>
+                            <input type="text" id="ya" class="form-control" inputmode="decimal">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Xb (m)</label>
+                            <input type="text" id="xb" class="form-control" inputmode="decimal">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Yb (m)</label>
+                            <input type="text" id="yb" class="form-control" inputmode="decimal">
+                        </div>
+                    </div>
+
+                    <button id="geoBtn" type="button"
+                            class="btn btn-custom w-100 mt-4 shadow-sm">
+                        Calculate Distance & Azimuth
+                    </button>
+
+                    <div id="resGeodetic"
+                         class="alert alert-primary mt-3 d-none result-box text-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRIG -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body p-4 text-center">
+                    <h4 class="card-title text-success mb-4 border-bottom pb-2">
+                        Angle & Trig Conversions
+                    </h4>
+
+                    <p class="text-muted small">
+                        Enter 4 angles in Degrees to convert them to Grads and see trigonometric values.
+                    </p>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-3"><input type="text" id="deg1" class="form-control" inputmode="decimal"></div>
+                        <div class="col-3"><input type="text" id="deg2" class="form-control" inputmode="decimal"></div>
+                        <div class="col-3"><input type="text" id="deg3" class="form-control" inputmode="decimal"></div>
+                        <div class="col-3"><input type="text" id="deg4" class="form-control" inputmode="decimal"></div>
+                    </div>
+
+                    <button id="trigBtn" type="button"
+                            class="btn btn-success w-100 mt-2 shadow-sm text-white">
+                        Convert & Calculate
+                    </button>
+
+                    <div id="resTrig" class="mt-3 table-responsive"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer class="text-center py-4 bg-dark text-white mt-5">
+    <p class="mb-0">Introduction to Information Technologies - Term Project</p>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("geoBtn").addEventListener("click", calculateGeodetic);
+    document.getElementById("trigBtn").addEventListener("click", calculateTrig);
+});
+
+function getVal(id) {
+    return parseFloat(
+        document.getElementById(id).value.replace(',', '.')
+    );
+}
+
+function calculateGeodetic() {
+    let xa = getVal('xa');
+    let ya = getVal('ya');
+    let xb = getVal('xb');
+    let yb = getVal('yb');
+
+    if (isNaN(xa) || isNaN(ya) || isNaN(xb) || isNaN(yb)) {
+        alert("Please fill all coordinate fields.");
+        return;
+    }
+
+    let s = Math.sqrt((xb - xa) ** 2 + (yb - ya) ** 2);
+    let tRad = Math.atan2(yb - ya, xb - xa);
+    let tGrad = tRad * (200 / Math.PI);
+    if (tGrad < 0) tGrad += 400;
+
+    let res = document.getElementById('resGeodetic');
+    res.classList.remove('d-none');
+    res.innerHTML =
+        `Distance (S): ${s.toFixed(3)} m <br>
+         Azimuth (t): ${tGrad.toFixed(4)} Grad`;
+}
+
+function calculateTrig() {
+    let ids = ['deg1', 'deg2', 'deg3', 'deg4'];
+    let table =
+        '<table class="table table-hover table-bordered mt-3 small">' +
+        '<thead><tr class="table-success">' +
+        '<th>Deg (°)</th><th>Grad (g)</th><th>Sin</th><th>Cos</th><th>Tan</th>' +
+        '</tr></thead><tbody>';
+
+    ids.forEach(id => {
+        let val = document.getElementById(id).value.replace(',', '.');
+        if (val !== "") {
+            let d = parseFloat(val);
+            let grad = d * (200 / 180);
+            let rad = d * (Math.PI / 180);
+
+            table += `<tr>
+                <td>${d}</td>
+                <td>${grad.toFixed(4)}</td>
+                <td>${Math.sin(rad).toFixed(4)}</td>
+                <td>${Math.cos(rad).toFixed(4)}</td>
+                <td>${Math.tan(rad).toFixed(4)}</td>
+            </tr>`;
+        }
+    });
+
+    document.getElementById('resTrig').innerHTML =
+        table + '</tbody></table>';
+}
+</script>
+
+</body>
+</html>
